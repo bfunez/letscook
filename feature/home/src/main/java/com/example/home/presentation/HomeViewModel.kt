@@ -17,6 +17,7 @@ class HomeViewModel @Inject constructor(
 
     sealed class Action : BaseAction {
         class RecipesListLoadingSuccess(val recipes: List<Recipe>) : Action()
+        class SearchListLoadingSuccess(val recipes: List<Recipe>) : Action()
         object RecipesListLoadingFailure : Action()
         object RecipesListLoading : Action()
     }
@@ -24,14 +25,16 @@ class HomeViewModel @Inject constructor(
     data class ViewState(
         val isError: Boolean = false,
         val isLoading: Boolean = false,
-        val recipesList: List<Recipe> = listOf()
+        val recipesList: List<Recipe> = listOf(),
+        val copyRecipesList: List<Recipe> = listOf()
     ) : BaseViewState
 
     override fun onReduceState(viewAction: Action): ViewState = when (viewAction) {
         is Action.RecipesListLoading -> state.copy(
             isLoading = true,
             isError = false,
-            recipesList = listOf()
+            recipesList = listOf(),
+            copyRecipesList = listOf()
         )
         is Action.RecipesListLoadingFailure -> state.copy(
             isLoading = false,
@@ -39,6 +42,12 @@ class HomeViewModel @Inject constructor(
             recipesList = listOf()
         )
         is Action.RecipesListLoadingSuccess -> state.copy(
+            isLoading = false,
+            isError = false,
+            recipesList = viewAction.recipes,
+            copyRecipesList = viewAction.recipes
+        )
+        is Action.SearchListLoadingSuccess -> state.copy(
             isLoading = false,
             isError = false,
             recipesList = viewAction.recipes
@@ -60,6 +69,10 @@ class HomeViewModel @Inject constructor(
             }
         }
 
+    }
+
+    fun searchItems(query : String){
+        sendAction(Action.SearchListLoadingSuccess(stateLiveData.value?.copyRecipesList?.filter {  it.title.contains(query)} ?: listOf()))
     }
 
 
