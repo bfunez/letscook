@@ -21,18 +21,6 @@ import dagger.Component
         HomeModule::class])
 interface HomeComponent {
     fun inject(fragment: HomeFragment)
-
-    /**
-     * Provide dependency graph UpdateNotesApi
-     *
-     * @return UpdateNotesApi
-     */
     fun getRecipesApi(): GetRecipesApi
-
-    /**
-     * Provide dependency graph notes
-     *
-     * @return UpdateNotesRepository
-     */
     fun recipesRepository(): RecipesRepository
 }
